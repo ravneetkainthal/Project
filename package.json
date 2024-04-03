@@ -1,0 +1,17 @@
+{
+  "name": "phase0",
+  "version": "1.0.0",
+  "description": "Project phase 0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Ravneet",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0",
+    "validators": "^0.3.1"
+  }
+}
