@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Detail</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            background-color: linen;
+        }
+        th {
+            background-color: lavender;
+        }
+    </style>
+</head>
+<body >
+    {{#if movie}}
+    <h1 style="color: brown;">{{movie.title}}</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td><strong>Plot:</strong></td>
+                <td>{{movie.plot}}</td>
+            </tr>
+            <tr>
+                <td><strong>Genres:</strong></td>
+                <td>
+                    {{#each movie.genres}}
+                    {{this}}{{#unless @last}},{{/unless}}
+                    {{/each}}
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Cast:</strong></td>
+                <td>
+                    {{#each movie.cast}}
+                    {{this}}{{#unless @last}},{{/unless}}
+                    {{/each}}
+                </td>
+            </tr>
+            <tr>
+                <td><strong>IMDb:</strong></td>
+                <td>
+                    {{#each movie.imdb}}
+                    {{this}}{{#unless @last}},{{/unless}}
+                    {{/each}}
+                </td>
+            </tr>
+          
+            <tr>
+                <td><strong>Runtime:</strong></td>
+                <td>{{movie.runtime}} minutes</td>
+            </tr>
+           <tr>
+                <td><strong>Poster:</strong></td>
+                <td>
+                    {{#if movie.poster}}
+                        <img src="{{movie.poster}}" alt="{{movie.title}} Poster" style="max-width: 100px;">
+                    {{else}}
+                        No Poster Available
+                    {{/if}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    {{else}}
+    <p>Sorry!! No Movies available accoring entered ID</p>
+    {{/if}}
+</body>
+</html>

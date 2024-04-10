@@ -1,0 +1,51 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Header */
+header {
+    background-color:lightblue;
+    color: #333;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Navigation */
+nav ul {
+    list-style-type:none;
+    font-size: larger;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: brown;
+    text-decoration: wavy;
+}
+
+/* Main Content */
+main {
+    padding: 20px;
+    min-height: calc(100vh - 177px);
+    background-color: snow;
+}
+
+/* Footer */
+footer {
+    background-color:lightblue;
+    color: brown;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    clear: both;
+    width: 100%;
+   
+  
+}

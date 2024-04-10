@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <style>
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            background-color: linen;
+        }
+        th {
+            background-color: lavender;
+        }
+    </style>
+</head>
+<body >
+    <h1 style="color: brown;">List of Movies</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Plot</th>
+                <th>Genres</th>
+                <th>Cast</th>
+                <th>Rating</th>
+                <th>Released</th>
+                <th>Runtime</th>
+                <th>Poster</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {{#each movie}}
+            <tr>
+                <td>{{this.title}}</td>
+                <td>{{this.plot}}</td>
+                <td>{{#each this.genres}}
+                    {{this}}  
+                    {{!-- CHECKING IF CURRENT ITERATION IS NOT LAST ONE IN ARRAY 
+                    IF IT'S LAST THEN @LAST WILL GIVE TRUE OTHERWISE
+                     SEPARTES WITH COMMA --}}
+                    {{#unless @last}},
+                     {{/unless}}
+                     {{/each}}</td>
+
+                     <td>{{#each this.cast}}
+                         {{this}} 
+                         {{#unless @last}},
+                         {{/unless}} {{/each}}</td>
+
+                     <td>{{#each this.imdb}}
+                         {{this}} 
+                         {{#unless @last}},
+                         {{/unless}} {{/each}}</td>
+
+                <td>{{this.released}} </td>
+                <td>{{this.runtime}} minutes</td>
+                 <td>
+                    {{#if this.poster}}
+                        <img src="{{this.poster}}" alt="{{this.title}} Poster" style="max-width: 100px;">
+                    {{else}}
+                        No Poster Available
+                    {{/if}}
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>
