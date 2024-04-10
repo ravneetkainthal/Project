@@ -20,7 +20,13 @@ const { error } = require("console");
 
 
 //CONNECTION TO  ATLAS DB
-mongoose.connect(process.env.url);
+// mongoose.connect(process.env.url);
+// let db = mongoose.connection;
+
+mongoose.connect(process.env.urlencoded, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 let db = mongoose.connection;
 
 // Check connection
