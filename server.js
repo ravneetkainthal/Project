@@ -22,7 +22,8 @@ const jwt = require('jsonwebtoken');
 
 
 
-const port = 8000;
+// const port = 4500;
+const port = 4500;
 
 
 //middleware
