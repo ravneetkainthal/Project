@@ -1,0 +1,98 @@
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            background-color: linen;
+        }
+        th {
+            background-color: lavender;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: black;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+            margin: 0 4px;
+        }
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+
+<body>
+    <h1 style="color: brown;">List of Movies</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Plot</th>
+                <th>Genres</th>
+                <th>Cast</th>
+                <th>Rating</th>
+                <th>Released</th>
+                <th>Runtime</th>
+                <th>Poster</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each movies}}
+            <tr>
+                <td>{{this.title}}</td>
+                <td>{{this.plot}}</td>
+                <td>
+                    {{#each this.genres}}
+                    {{this}}
+                    {{#unless @last}},{{/unless}}
+                    {{/each}}
+                </td>
+                <td>
+                    {{#each this.cast}}
+                    {{this}}
+                    {{#unless @last}},{{/unless}}
+                    {{/each}}
+                </td>
+                <td>
+                    {{#each this.imdb}}
+                    {{this}}
+                    {{#unless @last}},{{/unless}}
+                    {{/each}}
+                </td>
+                <td>{{this.released}}</td>
+                <td>{{this.runtime}} minutes</td>
+                <td>
+                    {{#if this.poster}}
+                    <img src="{{this.poster}}" alt="{{this.title}} Poster" style="max-width: 100px;">
+                    {{else}}
+                    No Poster Available
+                    {{/if}}
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {{#if prevPage}}
+        <a href="?page={{prevPage}}">&laquo; Previous</a>
+        {{/if}}
+        {{#each pageNumbers}}
+        <a href="?page={{this}}" class="{{#if (isCurrentPage ../currentPage)}}active{{/if}}">{{this}}</a>
+        {{/each}}
+        {{#if nextPage}}
+        <a href="?page={{nextPage}}">Next &raquo;</a>
+        {{/if}}
+    </div>
+</body>
+

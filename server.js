@@ -3,6 +3,9 @@ require("dotenv").config();
 // Importing the Movie model
 
 const movies = require('./models/movies');
+const User = require('./models/user'); 
+const authMovies= require('./routes/movies');
+const {requireAuth, checkUser}= require('./middleware/moviesMiddleware');
 
 const express = require('express');
 const cors = require('cors');
@@ -12,7 +15,21 @@ const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-acce
 const Handlebars = require('handlebars'); 
 const path = require("path");
 const app = express();
+const bodyParser = require('body-parser');
+const bcrypt= require('bcrypt');
+const cookieParser= require('cookie-parser');
+const jwt = require('jsonwebtoken');
+
+
 const port = 8000;
+
+
+//middleware
+app.use(cookieParser());
+app.use(express.json());
+
+// Parse JSON bodies
+app.use(bodyParser.json());
 
 // Import mongoose
 const mongoose = require("mongoose");
@@ -23,10 +40,15 @@ const { error } = require("console");
 // mongoose.connect(process.env.url);
 // let db = mongoose.connection;
 
-mongoose.connect(process.env.urlencoded, {
+url='mongodb+srv://ravneetkainthal:12345@ravneet.mrqk2ll.mongodb.net/sample_mflix';
+
+
+mongoose.connect(url, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true  
 });
+
+
 let db = mongoose.connection;
 
 // Check connection
@@ -41,24 +63,38 @@ db.on("error", function (err) {
 
 // Use the CORS middleware
 app.use(cors());
-
+//APLYING MIDDLEWARE FOR CHECK USER
+app.get('*', checkUser);
 // Initialize built-in middleware for urlencoding and json
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
+
+
 // Set views directory
-app.set('views', path.join(__dirname, 'views'));
+// app.set('views', path.join(__dirname, 'views'));
+
+app.set('views', [
+  path.join(__dirname, 'views', 'layouts'),
+  path.join(__dirname, 'views', 'partials'),
+  path.join(__dirname, 'views')
+]);
+
 
 // Set Handlebars as the view engine
 app.engine('.hbs', exphbs.engine({
   extname: '.hbs',
   defaultLayout: "main" ,
+  layoutsDir: path.join(__dirname, 'views', 'layouts'),
+  partialsDir: path.join(__dirname, 'views', 'partials'),
   handlebars: allowInsecurePrototypeAccess(Handlebars)
  }));
-app.set('view engine', 'hbs');
+app.set('view engine', 'hbs');//SETTING TEMPLATE ENGINE
 
-app.get('/', (req, res) => {
+
+//ROUTE FOR HOME PAGE
+app.get('/', requireAuth,(req, res) => {
     res.render('home');
 });
 
@@ -67,7 +103,7 @@ app.get('/', (req, res) => {
 //DEFINING ALL CRUD ROUTES
 
 //GET MOVIES
-app.get('/api/Movies', function(req, res) {
+app.get('/api/Movies', requireAuth, (req, res) =>{
   // Query movies and Show only first 100 only
 
   movies.find().limit(100)
@@ -169,6 +205,67 @@ app.post('/api/Movies',  (req, res) => {
 
 //WE WILL TRY TO ADD MORE ROUTES AFTER COMPLETING ABOVE ONES
 
+
+// // Register Handlebars helper function to check if the page is the current page
+// Handlebars.registerHelper('isCurrentPage', function(pageNumber, currentPage) {
+//   return pageNumber === currentPage ? 'active' : '';
+// });
+// //PAGINATION ROUTE
+
+// app.get('/api/Movies', (req, res) => {
+//   // Initialize empty query object
+//   let query = {};
+
+//   // Extract pagination and title filter parameters+
+//   const { page = 1, perPage = 10, title } = req.query;
+
+//   // If title is provided, construct title filter for MongoDB query
+//   if (title) {
+//       // Case-insensitive search for movie titles containing provided string
+//       query = { title: { $regex: title, $options: 'i' } };
+//   }
+
+//   // Create promises for counting total documents and fetching movies
+//   let totalCountPromise = movies.countDocuments(query);
+//   let moviesPromise = movies.find(query)
+//       .skip((parseInt(page) - 1) * parseInt(perPage))
+//       .limit(parseInt(perPage));
+
+//   // Execute promises concurrently
+//   Promise.all([totalCountPromise, moviesPromise])
+//       .then(([totalCount, moviesList]) => {
+//           // Calculate pagination metadata
+//           const totalPages = Math.ceil(totalCount / perPage);
+//           const currentPage = parseInt(page);
+//  // Log moviesList to verify data
+//  console.log('Movies List:', moviesList);
+
+//           // Render the Handlebars template with pagination metadata and movie list
+//           res.render('pagination', {
+//               currentPage,
+//               perPage: parseInt(perPage),
+//               totalPages,
+//               totalCount,
+//               movies: moviesList
+//           });
+//         //   res.json({
+//         //     currentPage,
+//         //     perPage: parseInt(perPage),
+//         //     totalPages,
+//         //     totalCount,
+//         //     movies: moviesList
+//         // });
+//       })
+//       .catch(error => {
+//           // Handle errors
+//           console.error("Server Error", error);
+//           // Send 500 Internal Server Error response
+//           res.status(500).send("Internal Server Error");
+//       });
+// });
+
+//pagination ends
+app.use(authMovies);
 
 
 app.listen(port, () => {
