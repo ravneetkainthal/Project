@@ -21,6 +21,7 @@ const cookieParser= require('cookie-parser');
 const jwt = require('jsonwebtoken');
 
 
+
 const port = 8000;
 
 
@@ -37,19 +38,19 @@ const { error } = require("console");
 
 
 //CONNECTION TO  ATLAS DB
-// mongoose.connect(process.env.url);
-// let db = mongoose.connection;
-
-url='mongodb+srv://ravneetkainthal:12345@ravneet.mrqk2ll.mongodb.net/sample_mflix';
+mongoose.connect(process.env.url);
+let db = mongoose.connection;
 
 
-mongoose.connect(url, {
+
+
+mongoose.connect(process.env.url, {
   useNewUrlParser: true,
   useUnifiedTopology: true  
 });
 
 
-let db = mongoose.connection;
+
 
 // Check connection
 db.once("open", function () {
