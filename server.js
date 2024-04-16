@@ -22,7 +22,7 @@ const jwt = require('jsonwebtoken');
 
 
 
-const port = 8000;
+// const port = 8000;
 
 
 //middleware
@@ -269,6 +269,6 @@ app.post('/api/Movies', (req, res) => {
 app.use(authMovies);
 
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(3000, () => {
+  console.log(`Server is running on http://localhost:3000`);
 });
