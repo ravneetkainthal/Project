@@ -3,21 +3,21 @@ require("dotenv").config();
 // Importing the Movie model
 
 const movies = require('./models/movies');
-const User = require('./models/user'); 
-const authMovies= require('./routes/movies');
-const {requireAuth, checkUser}= require('./middleware/moviesMiddleware');
+const User = require('./models/user');
+const authMovies = require('./routes/movies');
+const { requireAuth, checkUser } = require('./middleware/moviesMiddleware');
 
 const express = require('express');
 const cors = require('cors');
-const exphbs  = require('express-handlebars');
+const exphbs = require('express-handlebars');
 const expressHandlebars = require('express-handlebars');
-const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
-const Handlebars = require('handlebars'); 
+const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
+const Handlebars = require('handlebars');
 const path = require("path");
 const app = express();
 const bodyParser = require('body-parser');
-const bcrypt= require('bcrypt');
-const cookieParser= require('cookie-parser');
+const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 
 
@@ -46,7 +46,7 @@ let db = mongoose.connection;
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true  
+  useUnifiedTopology: true
 });
 
 
@@ -86,17 +86,17 @@ app.set('views', [
 // Set Handlebars as the view engine
 app.engine('.hbs', exphbs.engine({
   extname: '.hbs',
-  defaultLayout: "main" ,
+  defaultLayout: "main",
   layoutsDir: path.join(__dirname, 'views', 'layouts'),
   partialsDir: path.join(__dirname, 'views', 'partials'),
   handlebars: allowInsecurePrototypeAccess(Handlebars)
- }));
+}));
 app.set('view engine', 'hbs');//SETTING TEMPLATE ENGINE
 
 
 //ROUTE FOR HOME PAGE
-app.get('/', requireAuth,(req, res) => {
-    res.render('home');
+app.get('/', requireAuth, (req, res) => {
+  res.render('home');
 });
 
 
@@ -104,7 +104,7 @@ app.get('/', requireAuth,(req, res) => {
 //DEFINING ALL CRUD ROUTES
 
 //GET MOVIES
-app.get('/api/Movies', requireAuth, (req, res) =>{
+app.get('/api/Movies', requireAuth, (req, res) => {
   // Query movies and Show only first 100 only
 
   movies.find().limit(100)
@@ -124,85 +124,85 @@ app.get('/api/Movies', requireAuth, (req, res) =>{
 app.get('/api/Movies/:id', (req, res) => {
   const movieid = req.params.id;
   movies.findById(movieid)
-  .then(movie => {
+    .then(movie => {
       if (!movie) {
-          return res.status(404).send("No Movie with that ID");
+        return res.status(404).send("No Movie with that ID");
       }
       res.render('partials/moviesbyID', { movie: movie });
-  })
-  .catch(error => {
+    })
+    .catch(error => {
       res.status(500).send(`Server Error ${error}`); // error status
-  });
+    });
 });
 
-   
+
 
 //UPDATE MOVIES
-app.put('/api/Movies/:id',  (req, res)=>{
+app.put('/api/Movies/:id', (req, res) => {
 
   const movieid = req.params.id;
-  const updatedData= req.body;
+  const updatedData = req.body;
 
-  movies.findByIdAndUpdate(movieid, updatedData, {new: true})
-   .then((updatedMovie) =>{
-    if(!updatedMovie){
+  movies.findByIdAndUpdate(movieid, updatedData, { new: true })
+    .then((updatedMovie) => {
+      if (!updatedMovie) {
         return res.status(404).send("No Movie with that id exist");
-    }
-   res.status(200).send("Movie updated successfully");
-   })
-   .catch((err) =>{
-    console.error("Server Error", error);
-    res.status(500).send("Internal Server Error");
-   });
+      }
+      res.status(200).send("Movie updated successfully");
+    })
+    .catch((err) => {
+      console.error("Server Error", error);
+      res.status(500).send("Internal Server Error");
+    });
 
 });
- 
+
 //DELETE MOVIES
-app.delete('/api/Movies/:id',  (req, res)=>{
+app.delete('/api/Movies/:id', (req, res) => {
 
   const movieid = req.params.id;
-  
+
   movies.findByIdAndDelete(movieid)
-   .then((deletedMovie) =>{
-    if(!deletedMovie){
+    .then((deletedMovie) => {
+      if (!deletedMovie) {
         return res.status(404).send("No Movie with that id exist");
-    }
-   res.status(200).send("Movie Deleted successfully");
-   })
-   .catch((err) =>{
-    console.error("Server Error", error);
-    res.status(500).send("Internal Server Error");
-   });
+      }
+      res.status(200).send("Movie Deleted successfully");
+    })
+    .catch((err) => {
+      console.error("Server Error", error);
+      res.status(500).send("Internal Server Error");
+    });
 
 });
 
 
 //CREATE MOVIES
-app.post('/api/Movies',  (req, res) => {
- 
-  const{title,plot, genres,cast,imbd,runtime, director, year} = req.body;
+app.post('/api/Movies', (req, res) => {
+
+  const { title, plot, genres, cast, imbd, runtime, director, year } = req.body;
 
   //creting new movie object
-  const  newMovie=new movies({
-      title: title ,
-      plot : plot ,
-      genres :genres,
-      cast : cast ,
-      imbd : imbd ,
-      runtime : runtime ,
-      director:director,
-      year:year
+  const newMovie = new movies({
+    title: title,
+    plot: plot,
+    genres: genres,
+    cast: cast,
+    imbd: imbd,
+    runtime: runtime,
+    director: director,
+    year: year
   });
   //saving the new movie to database
   newMovie.save()
-  .then(()=>{
-    res.status(201).send("Movie Created and added to database");
-  } )
-  .catch (error =>{
-    console.error("Server Error: ", error);
-    res.status(500).send("Internal Server Error")
-  });
- });
+    .then(() => {
+      res.status(201).send("Movie Created and added to database");
+    })
+    .catch(error => {
+      console.error("Server Error: ", error);
+      res.status(500).send("Internal Server Error")
+    });
+});
 
 //WE WILL TRY TO ADD MORE ROUTES AFTER COMPLETING ABOVE ONES
 
